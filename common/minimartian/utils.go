@@ -210,6 +210,53 @@ func IsTlsHandleShake(conn net.Conn) (fConn net.Conn, _ bool, _ error) {
 	return peekable, raw[0] == 0x16, nil
 }
 
+type tunnelProtocol uint8
+
+const (
+	tunnelProtocolUnknown tunnelProtocol = iota
+	tunnelProtocolHTTP
+	tunnelProtocolTLS
+)
+
+// detectTunnelProtocol classifies the client side of a SOCKS5 or HTTP CONNECT
+// tunnel without consuming its first bytes. Unknown is a normal result and is
+// expected to be transparently forwarded by the caller.
+func detectTunnelProtocol(conn net.Conn) (net.Conn, tunnelProtocol, error) {
+	peekable, ok := conn.(*utils.BufferedPeekableConn)
+	if !ok {
+		peekable = utils.NewPeekableNetConn(conn)
+	}
+
+	raw, err := peekable.Peek(2)
+	if err != nil {
+		if err == io.EOF {
+			return peekable, tunnelProtocolUnknown, nil
+		}
+		return nil, tunnelProtocolUnknown, utils.Errorf("peek tunnel protocol failed: %s", err)
+	}
+	// Preserve minimartian's existing TLS/GM-TLS behavior: its handshake
+	// dispatch has historically keyed on the TLS handshake content type (0x16)
+	// rather than requiring the standard TLS 0x03 record version.
+	if len(raw) >= 1 && raw[0] == 0x16 {
+		return peekable, tunnelProtocolTLS, nil
+	}
+	if !utils.CouldBeHTTPRequestPrefix(raw) {
+		return peekable, tunnelProtocolUnknown, nil
+	}
+
+	// Eight bytes cover every method prefix currently recognized by tcpmitm.
+	// Peek may legally return fewer bytes; the shared matcher still recognizes
+	// short methods such as GET as soon as their trailing space is present.
+	raw, err = peekable.Peek(8)
+	if err != nil && err != io.EOF {
+		return nil, tunnelProtocolUnknown, utils.Errorf("peek HTTP tunnel protocol failed: %s", err)
+	}
+	if utils.IsHTTPRequestPrefix(raw) {
+		return peekable, tunnelProtocolHTTP, nil
+	}
+	return peekable, tunnelProtocolUnknown, nil
+}
+
 func peekTLSVersion(conn net.Conn) (fConn net.Conn, version int, _ error) {
 	peekable, ok := conn.(*utils.BufferedPeekableConn)
 	if !ok {
