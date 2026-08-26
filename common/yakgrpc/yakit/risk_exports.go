@@ -765,6 +765,7 @@ func SaveRisk(r *schema.Risk) error {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要连接公网 Bridge 反连平台获取 token。
 // // 该示例为示意性用法：创建待验证风险
 // token = risk.NewDNSLogDomain()[1]
 // r, err = risk.NewUnverifiedRisk("http://example.com", token, risk.title("SSRF"), risk.severity("high"))
@@ -1000,6 +1001,7 @@ func NewDNSLogDomainWithContext(ctx context.Context) (domain string, token strin
 //
 // Example:
 // ```
+// // 无法本地验证: 需要连接公网 Bridge 反连平台。
 // domain, token = risk.NewDNSLogDomain()~
 // ```
 func NewDNSLogDomain() (domain string, token string, _ error) {
@@ -1029,6 +1031,7 @@ func NewDNSLogDomain() (domain string, token string, _ error) {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要连接公网 Bridge 反连平台。
 // domain, token = risk.NewHTTPLog()~
 // ```
 func NewHTTPLog(i ...any) (domain string, token string, _ error) {
@@ -1170,6 +1173,7 @@ func CheckDNSLogByToken(token string, pluginContext YakitPluginInfo, timeout ...
 //
 // Example:
 // ```
+// // 无法本地验证: 需要连接公网 Bridge 反连平台与 DNSLog 服务。
 // domain, token = risk.NewDNSLogDomain()~
 // // 触发目标解析 domain 后查询（需要网络与 DNSLog 平台，示意性示例）
 // events = risk.CheckDNSLogByToken(token, 5)~
@@ -1343,6 +1347,7 @@ func CheckRandomTriggerByToken(t string, pluginContext YakitPluginInfo) (*tpb.Ra
 //
 // Example:
 // ```
+// // 无法本地验证: 需要连接公网 Bridge 反连平台。
 // resp = risk.CheckServerReachable(context.Background(), "example.com", false)~
 // print(resp.Reachable) // 是否可达
 // ```

@@ -72,6 +72,7 @@ func isAlphaNum(i interface{}) bool {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的 TLS 服务目标。
 // str.IsTLSServer("www.yaklang.com:443") // true
 // str.IsTLSServer("www.yaklang.com:80") // false
 // ```

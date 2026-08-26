@@ -3227,6 +3227,7 @@ func WithFixQueryEscape(b bool) PocConfigOption {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // poc.Download("https://example.com/file.zip", poc.downloadProgress(func(downloaded, total, percent) {
 //
 //	println(sprintf("下载进度: %.2f%% (%d/%d)", percent, downloaded, total))
@@ -3249,6 +3250,7 @@ func WithDownloadProgress(callback func(downloaded int64, total int64, percent f
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // poc.Download("https://example.com/file.zip", poc.downloadFinished(func(filePath) {
 //
 //	println("下载完成: " + filePath)
@@ -3271,6 +3273,7 @@ func WithDownloadFinished(callback func(filePath string)) PocConfigOption {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // poc.Download("https://example.com/file.zip", poc.downloadFilename("my_file.zip"))
 // ```
 func WithDownloadFilename(filename string) PocConfigOption {
@@ -3289,6 +3292,7 @@ func WithDownloadFilename(filename string) PocConfigOption {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // poc.Download("https://example.com/file.zip", poc.downloadDir("/tmp/downloads"))
 // ```
 func WithDownloadDir(dir string) PocConfigOption {
@@ -3409,6 +3413,7 @@ func RemoveSession(session string) {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // filename, err = poc.Download("https://example.com/file.zip")
 // filename, err = poc.Download("https://example.com/file.zip", poc.downloadProgress(func(downloaded, total, percent) {
 //
@@ -3432,6 +3437,7 @@ func Download(urlStr string, opts ...PocConfigOption) (string, error) {
 //
 // Example:
 // ```
+// // 无法本地验证: 需要真实可达的下载目标。
 // filename, err = poc.DownloadWithMethod("POST", "https://example.com/download", poc.body("token=xxx"))
 // ```
 func DownloadWithMethod(method string, urlStr string, opts ...PocConfigOption) (string, error) {
